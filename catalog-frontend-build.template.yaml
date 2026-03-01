@@ -1,0 +1,72 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: catalog-frontend-build
+
+parameters:
+- name: NAME
+  description: Application name
+  required: true
+  value: catalog-ui
+
+- name: GIT_REPO
+  description: Git repository URL
+  required: true
+
+- name: GIT_REF
+  description: Git branch
+  value: main
+
+- name: GIT_USERNAME
+  description: Git username
+
+- name: GIT_PASSWORD
+  description: Git password
+
+- name: NPM_MIRROR
+  description: NPM mirror repository
+
+- name: BACKEND_URL
+  description: Backend service URL
+
+objects:
+
+# ImageStream
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    name: ${NAME}
+
+# BuildConfig
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    name: ${NAME}
+
+  spec:
+    source:
+      type: Git
+      git:
+        uri: ${GIT_REPO}
+        ref: ${GIT_REF}
+
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: nodejs:18
+          namespace: openshift
+        env:
+        - name: NPM_MIRROR
+          value: ${NPM_MIRROR}
+        - name: BACKEND_URL
+          value: ${BACKEND_URL}
+
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${NAME}:latest
+
+    triggers:
+    - type: ConfigChange
