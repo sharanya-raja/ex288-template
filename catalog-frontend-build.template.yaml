@@ -2,8 +2,14 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: catalog-frontend-build
-
+  labels:
+    app: catalog-ui
+    group: catalog
 parameters:
+- name: REGISTRY_URL
+  description: Container images registry url
+  required: true
+
 - name: NAME
   description: Application name
   required: true
@@ -36,12 +42,18 @@ objects:
   kind: ImageStream
   metadata:
     name: ${NAME}
+    labels:
+      app: catalog-ui
+      group: catalog
 
 # BuildConfig
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
     name: ${NAME}
+    labels: 
+      app: catalog-ui
+      group: catalog
 
   spec:
     source:
