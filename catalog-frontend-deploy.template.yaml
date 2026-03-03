@@ -2,6 +2,9 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: catalog-frontend-deploy
+  labels:
+    app: catalog-ui
+    group: catalog
 
 parameters:
 - name: NAME
@@ -18,7 +21,9 @@ objects:
   kind: Deployment
   metadata:
     name: ${NAME}
-
+    labels:
+      app: catalog-ui
+      group: catalog
   spec:
     replicas: 1
     selector:
@@ -43,6 +48,9 @@ objects:
   kind: Service
   metadata:
     name: ${NAME}
+    labels:
+      app: catalog-ui
+      group: catalog
 
   spec:
     selector:
@@ -57,6 +65,9 @@ objects:
   kind: Route
   metadata:
     name: ${NAME}
+    labels:
+      app: catalog-ui
+      group: catalog
 
   spec:
     host: ${FRONTEND_URL}
